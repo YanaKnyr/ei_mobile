@@ -159,7 +159,7 @@ body {
     margin-left: auto;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
     .middle {
         flex-direction: column;
     }
@@ -243,3 +243,4 @@ body {
         padding: 0;
     }
 }
+
