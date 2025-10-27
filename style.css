@@ -203,7 +203,7 @@ body {
         padding: 0;
     }
     .menu li {
-        margin: 5px 10px;
+        margin: 5px;
     }
     .menu a {
         font-size: 13px;
@@ -243,4 +243,5 @@ body {
         padding: 0;
     }
 }
+
 
