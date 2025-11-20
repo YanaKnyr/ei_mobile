@@ -53,67 +53,86 @@ document.getElementById("calcAreaBtn").onclick = function () {
     result.textContent = "Площа прямокутника = " + area;
 };
 
+// ===== Завдання 3: робота з масивом чисел =====
+
+// Функція для збереження cookies
 function setCookie(name, value, days = 365) {
     const date = new Date();
-    date.setTime(date.getTime() + days*24*60*60*1000);
-    document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/`;
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
 }
 
+// Отримання cookies
 function getCookie(name) {
-    const cookies = document.cookie.split("; ");
-    for (let c of cookies) {
+    const decoded = decodeURIComponent(document.cookie).split("; ");
+    for (let c of decoded) {
         let [key, value] = c.split("=");
-        if (key === name) return decodeURIComponent(value);
+        if (key === name) return value;
     }
     return null;
 }
 
+// Видалення cookies
 function deleteCookie(name) {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
 }
 
-// ===== Перевірка cookies =====
-function checkCookies() {
-    const numbersForm = document.getElementById("numbersForm");
+// ----- Перевіряємо, чи вже є cookies -----
+window.addEventListener("load", function () {
+
     const saved = getCookie("minResult");
 
     if (saved) {
+        // якщо є cookies → питаємо, чи залишити
         const keep = confirm("Знайдений попередній результат: " + saved +
-                             "\nБажаєте залишити ці дані?");
+            "\nБажаєте залишити ці дані?");
+
         if (keep) {
             alert("Дані залишено. Оновіть сторінку, щоб продовжити роботу.");
-            numbersForm.style.display = "none";
+            // форму приховуємо
+            document.getElementById("numbersForm").style.display = "none";
         } else {
+            // видаляємо та показуємо форму знову
             deleteCookie("minResult");
-            alert("Cookies видалено. Сторінка перезавантажиться.");
-            location.reload(true);
+            alert("Cookies видалено. Можна ввести нові числа.");
         }
-    } else {
-        numbersForm.style.display = "block";
     }
-}
+});
 
-window.addEventListener("load", checkCookies);
 
 // ===== Обробка введення чисел =====
-document.getElementById("processNumbersBtn").addEventListener("click", function() {
-    const input = document.getElementById("numbersInput").value;
-    let arr = input.split(/[\s,]+/).filter(x => x !== "").map(Number);
+document.getElementById("processNumbersBtn").onclick = function () {
 
+    let input = document.getElementById("numbersInput").value;
+
+    // Ділимо по комах і пробілах — універсально
+    let arr = input.split(/[\s,]+/).filter(x => x !== "");
+
+    // Перетворюємо в числа
+    arr = arr.map(Number);
+
+    // Перевірка, що всі — числа
     if (arr.some(isNaN)) {
         alert("Помилка: введіть тільки числа.");
         return;
     }
 
+    // Перевірка на кількість
     if (arr.length !== 10) {
         alert("Помилка: потрібно ввести рівно 10 чисел.");
         return;
     }
 
+    // Знаходимо мінімальне число
     const min = Math.min(...arr);
+
+    // Рахуємо, скільки разів воно зустрічається
     const count = arr.filter(x => x === min).length;
-    const result = `Мінімальне число: ${min}; Кількість повторень: ${count}`;
+
+    const result = `Мінімальне число: ${min}\nКількість повторень: ${count}`;
 
     alert(result);
+
+    // Зберігаємо в cookies
     setCookie("minResult", result);
-});
+};
